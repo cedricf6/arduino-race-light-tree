@@ -11,10 +11,11 @@
 * 26/10/2023		Cedric Falzon		Restrctured the program to use functions and added IR sensors functionality.
 * 26/10/2023    Cedric Falzon   Added functionality to control the PreStage Lights.
 * 27/10/2023    Cedric Falzon   Added functionaliy to check for false start.
+* 30/10/2023    Cedric Falzon   Fixed *_FALSE_START in the output setup
 *
 /******************************************************************/
 
-#define R2_SENSOR 14               // Right Sensor No.2 placed after Start Line (Line 2)
+#define R2_SENSOR 0               // Right Sensor No.2 placed after Start Line (Line 2)
 #define L2_SENSOR 13               // Left Sensor No.2 placed after Start line (Line 2)
 #define R1_SENSOR 12               // Right Sensor No.1 placed in line with the Start Line (Line 1)
 #define L1_SENSOR 11               // Left Sensor No.1 placed in line with the Start Line (Line 1) 
@@ -44,6 +45,8 @@ void setup()
   pinMode(SECOND_YELLOW_LIGHTS, OUTPUT); 
   pinMode(THIRD_YELLOW_LIGHTS, OUTPUT);
   pinMode(GREEN_LIGHTS, OUTPUT);
+  pinMode(L_FALSE_START, OUTPUT);
+  pinMode(R_FALSE_START, OUTPUT);
 
   // INPUT SETUP
   pinMode(L1_SENSOR, INPUT);
