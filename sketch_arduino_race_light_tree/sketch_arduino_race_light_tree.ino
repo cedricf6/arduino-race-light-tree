@@ -2,7 +2,7 @@
 * Copyright         : 2023 - Kenneth A & Cedric F
 * File Name         : sketch_arduino_race_light_tree.ino
 * Description       : This file contains the logic to control a custom made race light tree for RC cars.
-* Version           : 0.5 
+* Version           : 0.6
 *                    
 * Revision History  :
 * Date				  Author    		  Comments
@@ -33,6 +33,7 @@
 bool leftPreStage = false;
 bool rightPreStage = false;
 bool greenLight = false;
+bool raceTreeLightStarted = false;
 
 void setup()
 {
@@ -49,10 +50,12 @@ void setup()
   pinMode(R_FALSE_START, OUTPUT);
 
   // INPUT SETUP
-  pinMode(L1_SENSOR, INPUT);
-  pinMode(R1_SENSOR, INPUT);
-  pinMode(L2_SENSOR, INPUT);
-  pinMode(R2_SENSOR, INPUT);
+  // Using INPUT_PULLUP for NPN Sensors and the logic is reversed 
+  // HIGH on the Pin means no detection
+  pinMode(L1_SENSOR, INPUT_PULLUP);
+  pinMode(R1_SENSOR, INPUT_PULLUP);
+  pinMode(L2_SENSOR, INPUT_PULLUP);
+  pinMode(R2_SENSOR, INPUT_PULLUP);
 
   // Initalization Testing Stage
   turnOnAllTheLights();
@@ -74,18 +77,18 @@ void startRaceTreeLights()
 {
   // If Left Sensor 1 IS blocked and Left Sensor 2 IS NOT blocked, turn on the left Pre Stage Lights.
   // This means that the Left car is on the starting line but not overlapping the second left sensor.
-  if (isL1Blocked() && !(isL2Blocked())){
+  if (isL1Blocked() && !isL2Blocked() && !leftPreStage){
     turnOnPreStageLeft();
   }
   
   // If Right Sensor 1 IS blocked and Right Sensor 2 IS NOT blocked, turn on the Right Pre Stage Lights.
   // This means that the Right car is on the starting line but not overlapping the second right sensor.
-  if (isR1Blocked() && !(isR2Blocked())){
+  if (isR1Blocked() && !isR2Blocked() && !rightPreStage){
     turnOnPreStageRight();
   }
 
   // If Left Pre Stage AND Right Pre Stage are both OK we proceed with the lights 
-  if (leftPreStage && rightPreStage){
+  if (leftPreStage && rightPreStage && !raceTreeLightStarted){
     delay(10000); // wait 10 seconds so the car handlers can approach their positions.
     continueRaceTreeLights();
   }
@@ -93,7 +96,7 @@ void startRaceTreeLights()
 
 void checkForFalseStart() {
   
-  //TODO: might need to check for leftPreStage and RightPreStage values too here so we wont get false positives.
+  // TODO: might need to check for leftPreStage and RightPreStage values too here so we wont get false positives.
 
   // Checking for Left Car False start.
   // Second set of sensors (L2) on Line 2 for the Left Car to check for a false start.
@@ -178,6 +181,7 @@ void turnOnAllTheLights() {
 }
 
 void continueRaceTreeLights() {
+  raceTreeLightStarted = true;
   digitalWrite(LEFT_STAGE_LIGHTS, LOW);       // Turn on the Left Stage Lights
   delay(1000);                                // Wait for a second 
   digitalWrite(RIGHT_STAGE_LIGHTS, LOW);      // Turn on the Right Stage Lights
