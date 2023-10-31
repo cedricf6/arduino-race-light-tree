@@ -5,13 +5,14 @@
 * Version           : 0.6
 *                    
 * Revision History  :
-* Date				  Author    		  Comments
+* Date				  Author      Comments
 * ---------------------------------------------------------------------------
-* 18/09/2023		Kenneth Abela		Created the first version using defalt sequence of instructions.
-* 26/10/2023		Cedric Falzon		Restrctured the program to use functions and added IR sensors functionality.
-* 26/10/2023    Cedric Falzon   Added functionality to control the PreStage Lights.
-* 27/10/2023    Cedric Falzon   Added functionaliy to check for false start.
-* 30/10/2023    Cedric Falzon   Fixed *_FALSE_START in the output setup
+* 18/09/2023		Kenneth A		Created the first version using defalt sequence of instructions.
+* 26/10/2023		Cedric F		Restrctured the program to use functions and added IR sensors functionality.
+* 26/10/2023    Cedric F    Added functionality to control the PreStage Lights.
+* 27/10/2023    Cedric F    Added functionaliy to check for false start.
+* 30/10/2023    Cedric F    Fixed *_FALSE_START in the output setup
+* 31/10/2023    Cedric F    Fixed the input pinmodes with INPUT_PULLUP and making sure that the PreStage lights are turned only once.
 *
 /******************************************************************/
 
