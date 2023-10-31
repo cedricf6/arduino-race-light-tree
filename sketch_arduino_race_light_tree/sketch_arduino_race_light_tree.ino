@@ -86,13 +86,13 @@ void loop()
   // Checking for Left Car False start.
   // Second set of sensors (L2) on Line 2 for the Left Car to check for a false start.
   if (isL2Blocked() && greenLight==false && raceTreeLightStarted==true) {
-    turnOnLeftFalseStartLight();
+    turnOnLeftFalseStartLight(); // This will keep on looping ON and OFF
   }
 
   // Checking for Right Car False start.
   // Second set of sensors (R2) on Line 2 for the Right Car to check for a false start.
   if (isR2Blocked() && greenLight==false && raceTreeLightStarted==true) {
-    turnOnRightFalseStartLight();
+    turnOnRightFalseStartLight(); // This will keep on looping ON and OFF
   }
 
   // If Left Sensor 1 IS blocked and Left Sensor 2 IS NOT blocked, turn on the left Pre Stage Lights.
@@ -160,7 +160,7 @@ void turnOnRightFalseStartLight() {
 }
 
 void turnOffAllTheLights() {
-  // HIGH MEANS TURN OFF THE LIGHTS
+  // HIGH MEANS TURN OFF THE LIGHTS - inverted cases
   digitalWrite(LEFT_PRE_STAGE_LIGHTS, HIGH);      
   digitalWrite(RIGHT_PRE_STAGE_LIGHTS, HIGH);     
   digitalWrite(LEFT_STAGE_LIGHTS, HIGH);    
@@ -174,6 +174,7 @@ void turnOffAllTheLights() {
 }
 
 void turnOnAllTheLights() {
+  // LOW MEANS TURN ON THE LIGHTS - inverted cases
   digitalWrite(LEFT_PRE_STAGE_LIGHTS, LOW);      
   digitalWrite(RIGHT_PRE_STAGE_LIGHTS, LOW);     
   digitalWrite(LEFT_STAGE_LIGHTS, LOW);
