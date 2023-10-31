@@ -2,7 +2,7 @@
 * Copyright         : 2023 - Kenneth A & Cedric F
 * File Name         : sketch_arduino_race_light_tree.ino
 * Description       : This file contains the logic to control a custom made race light tree for RC cars.
-* Version           : 0.6
+* Version           : 0.7
 *                    
 * Revision History  :
 * Date				  Author      Comments
@@ -15,6 +15,8 @@
 * 31/10/2023    Cedric F    Fixed the input pinmodes with INPUT_PULLUP and making sure that the PreStage lights are turned only once.
 *
 /******************************************************************/
+
+#include<Chrono.h>
 
 #define R2_SENSOR 0               // Right Sensor No.2 placed after Start Line (Line 2)
 #define L2_SENSOR 13               // Left Sensor No.2 placed after Start line (Line 2)
@@ -33,11 +35,21 @@
 
 bool leftPreStage = false;
 bool rightPreStage = false;
+bool stageLight = false;
+bool firstYellowLight = false;
+bool secondYellowLight = false;
+bool thirdYellowLight = false;
 bool greenLight = false;
+
 bool raceTreeLightStarted = false;
+bool raceTreeLightEnded = false;
+Chrono myChrono;
 
 void setup()
-{
+{  
+  // Stop the Chrono Timer since we will be using it in the loop function only
+  myChrono.stop();
+
   // OUTPUT SETUP
   pinMode(LEFT_PRE_STAGE_LIGHTS, OUTPUT); 
   pinMode(RIGHT_PRE_STAGE_LIGHTS, OUTPUT);
@@ -70,12 +82,18 @@ void setup()
 
 void loop()
 {
-  startRaceTreeLights();
-  checkForFalseStart();
-}
+  // Checking for Left Car False start.
+  // Second set of sensors (L2) on Line 2 for the Left Car to check for a false start.
+  if (isL2Blocked() && greenLight==false && raceTreeLightStarted==true) {
+    turnOnLeftFalseStartLight();
+  }
 
-void startRaceTreeLights()
-{
+  // Checking for Right Car False start.
+  // Second set of sensors (R2) on Line 2 for the Right Car to check for a false start.
+  if (isR2Blocked() && greenLight==false && raceTreeLightStarted==true) {
+    turnOnRightFalseStartLight();
+  }
+
   // If Left Sensor 1 IS blocked and Left Sensor 2 IS NOT blocked, turn on the left Pre Stage Lights.
   // This means that the Left car is on the starting line but not overlapping the second left sensor.
   if (isL1Blocked() && !isL2Blocked() && !leftPreStage){
@@ -89,26 +107,14 @@ void startRaceTreeLights()
   }
 
   // If Left Pre Stage AND Right Pre Stage are both OK we proceed with the lights 
-  if (leftPreStage && rightPreStage && !raceTreeLightStarted){
-    delay(10000); // wait 10 seconds so the car handlers can approach their positions.
-    continueRaceTreeLights();
-  }
-}
-
-void checkForFalseStart() {
+  if (leftPreStage && rightPreStage && !raceTreeLightEnded){
+    // Resume the Chrono Timer to use it instead of the delays
+    myChrono.resume();
   
-  // TODO: might need to check for leftPreStage and RightPreStage values too here so we wont get false positives.
-
-  // Checking for Left Car False start.
-  // Second set of sensors (L2) on Line 2 for the Left Car to check for a false start.
-  if (isL2Blocked() && (greenLight==false)) {
-    turnOnLeftFalseStartLight();
-  }
-
-  // Checking for Right Car False start.
-  // Second set of sensors (R2) on Line 2 for the Right Car to check for a false start.
-  if (isR2Blocked() && (greenLight==false)) {
-    turnOnRightFalseStartLight();
+    // Wait 10 seconds so the car handlers can approach their positions.
+    if (myChrono.hasPassed(10000, false) ) {
+      continueRaceTreeLights();
+    }
   }
 }
 
@@ -145,13 +151,11 @@ void turnOnPreStageRight() {
 void turnOnLeftFalseStartLight() {
   turnOffAllTheLights();
   digitalWrite(L_FALSE_START, LOW); // Turn on the Left False Start Light
-  delay(5000);
 }
 
 void turnOnRightFalseStartLight() {
   turnOffAllTheLights();
   digitalWrite(R_FALSE_START, LOW); // Turn on the Right False Start Light
-  delay(5000);
 }
 
 void turnOffAllTheLights() {
@@ -183,32 +187,54 @@ void turnOnAllTheLights() {
 
 void continueRaceTreeLights() {
   raceTreeLightStarted = true;
-  digitalWrite(LEFT_STAGE_LIGHTS, LOW);       // Turn on the Left Stage Lights
-  delay(1000);                                // Wait for a second 
-  digitalWrite(RIGHT_STAGE_LIGHTS, LOW);      // Turn on the Right Stage Lights
-  delay(1000);                                // Wait for a second
-  digitalWrite(FIRST_YELLOW_LIGHTS, LOW);     // Turn on the first pair of Yellow Lights
-  delay(500);                                 // Wait for half a second
-  digitalWrite(SECOND_YELLOW_LIGHTS, LOW);    // Turn on the second pair of Yellow Lights
-  delay(500);                                 // Wait for half a second
-  digitalWrite(THIRD_YELLOW_LIGHTS, LOW);     // Turn on the third pair of Yellow Lights    
-  delay(500);                                 // Wait for half a second
-  digitalWrite(GREEN_LIGHTS, LOW);            // Turn on the green lights and set greenLight as true.
-  greenLight = true;
 
-  // Set the other Lights OFF
-  digitalWrite(LEFT_PRE_STAGE_LIGHTS, HIGH);   
-  digitalWrite(RIGHT_PRE_STAGE_LIGHTS, HIGH);
-  digitalWrite(LEFT_STAGE_LIGHTS, HIGH);
-  digitalWrite(RIGHT_STAGE_LIGHTS, HIGH);
-  digitalWrite(FIRST_YELLOW_LIGHTS, HIGH);
-  digitalWrite(SECOND_YELLOW_LIGHTS, HIGH);
-  digitalWrite(THIRD_YELLOW_LIGHTS, HIGH);
-  digitalWrite(L_FALSE_START, HIGH);
-  digitalWrite(R_FALSE_START, HIGH);
+  // Turn on the pair of stage lights after two more seconds
+  if (myChrono.hasPassed(12000) && stageLight==false) {
+    digitalWrite(LEFT_STAGE_LIGHTS, LOW);
+    digitalWrite(RIGHT_STAGE_LIGHTS, LOW);
+    stageLight = true;
+  }
   
-  // Wait for 5 seconds before turning off the Green Lights
-  delay(5000);                   
-  digitalWrite(GREEN_LIGHTS, HIGH);
-  greenLight = false;
+  // Turn on the first pair of Yellow Lights after one more second
+  if (myChrono.hasPassed(13000) && firstYellowLight==false) {
+    digitalWrite(FIRST_YELLOW_LIGHTS, LOW); 
+    firstYellowLight = true;
+  }
+
+  // Turn on the second pair of Yellow Lights after half a second more
+  if (myChrono.hasPassed(13500) && secondYellowLight==false) {
+    digitalWrite(SECOND_YELLOW_LIGHTS, LOW);
+    secondYellowLight = true;
+  }
+
+  // Turn on the third pair of Yellow Lights after half a second more
+  if (myChrono.hasPassed(14000) && thirdYellowLight==false) {
+    digitalWrite(THIRD_YELLOW_LIGHTS, LOW);
+    thirdYellowLight = true;
+  }
+
+  // Turn on the Green Lights after half a second more
+  if (myChrono.hasPassed(14500) && greenLight==false) {
+    digitalWrite(GREEN_LIGHTS, LOW);
+    greenLight = true;
+
+    // Set the other Lights OFF
+    digitalWrite(LEFT_PRE_STAGE_LIGHTS, HIGH);   
+    digitalWrite(RIGHT_PRE_STAGE_LIGHTS, HIGH);
+    digitalWrite(LEFT_STAGE_LIGHTS, HIGH);
+    digitalWrite(RIGHT_STAGE_LIGHTS, HIGH);
+    digitalWrite(FIRST_YELLOW_LIGHTS, HIGH);
+    digitalWrite(SECOND_YELLOW_LIGHTS, HIGH);
+    digitalWrite(THIRD_YELLOW_LIGHTS, HIGH);
+    digitalWrite(L_FALSE_START, HIGH);
+    digitalWrite(R_FALSE_START, HIGH);
+  }
+
+  // Turn off the Green Lights after 5.5 seconds has passed and greenLight back to false.
+  if (myChrono.hasPassed(20000) && greenLight==true) {
+    digitalWrite(GREEN_LIGHTS, HIGH);
+    greenLight = false;
+    raceTreeLightEnded = true;
+  }                
+
 }
