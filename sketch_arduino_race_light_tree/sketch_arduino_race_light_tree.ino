@@ -13,6 +13,7 @@
 * 27/10/2023    Cedric F    Added functionaliy to check for false start.
 * 30/10/2023    Cedric F    Fixed *_FALSE_START in the output setup
 * 31/10/2023    Cedric F    Fixed the input pinmodes with INPUT_PULLUP and making sure that the PreStage lights are turned only once.
+* 31/10/2023    Cedric F    Removed the delays in the loop function to avoid blockage and tweaked some more logics.
 *
 /******************************************************************/
 
