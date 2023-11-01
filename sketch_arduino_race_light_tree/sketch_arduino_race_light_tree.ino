@@ -2,7 +2,7 @@
 * Copyright         : 2023 - Kenneth A & Cedric F
 * File Name         : sketch_arduino_race_light_tree.ino
 * Description       : This file contains the logic to control a custom made race light tree for RC cars.
-* Version           : 0.7
+* Version           : 0.8
 *                    
 * Revision History  :
 * Date				  Author      Comments
@@ -14,6 +14,7 @@
 * 30/10/2023    Cedric F    Fixed *_FALSE_START in the output setup
 * 31/10/2023    Cedric F    Fixed the input pinmodes with INPUT_PULLUP and making sure that the PreStage lights are turned only once.
 * 31/10/2023    Cedric F    Removed the delays in the loop function to avoid blockage and tweaked some more logics.
+* 01/11/2023                Changed Sensors from LOW to HIGH
 *
 /******************************************************************/
 
@@ -120,23 +121,23 @@ void loop()
 }
 
 bool isL1Blocked() {
-  // LOW means Object Detected and hence return True for Left Sensor of Line #1.
-  return digitalRead(L1_SENSOR) == LOW;
+  // HIGH means Object Detected and hence return True for Left Sensor of Line #1.
+  return digitalRead(L1_SENSOR) == HIGH;
 }
 
 bool isR1Blocked() {
-  // LOW means Object Detected and hence return True for Right Sensor of Line #1.
-  return digitalRead(R1_SENSOR) == LOW;
+  // HIGH means Object Detected and hence return True for Right Sensor of Line #1.
+  return digitalRead(R1_SENSOR) == HIGH;
 }
 
 bool isL2Blocked() {
-  // LOW means Object Detected and hence return True for Left Sensor of Line #2.
-  return digitalRead(L2_SENSOR) == LOW;
+  // HIGH means Object Detected and hence return True for Left Sensor of Line #2.
+  return digitalRead(L2_SENSOR) == HIGH;
 }
 
 bool isR2Blocked() {
-  // LOW means Object Detected and hence return True for Right Sensor of Line #2.
-  return digitalRead(R2_SENSOR) == LOW;
+  // HIGH means Object Detected and hence return True for Right Sensor of Line #2.
+  return digitalRead(R2_SENSOR) == HIGH;
 }
 
 void turnOnPreStageLeft() {
