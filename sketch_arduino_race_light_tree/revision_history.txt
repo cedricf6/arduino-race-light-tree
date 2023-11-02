@@ -1,0 +1,14 @@
+* Revision History  :
+* Date		        Version     Comments
+* ---------------------------------------------------------------------------
+* 18/09/2023		0.1		    Created the first version using defalt sequence of instructions.
+* 26/10/2023		0.2		    Restrctured the program to use functions and added IR sensors functionality.
+* 26/10/2023        0.3         Added functionality to control the PreStage Lights.
+* 27/10/2023        0.4         Added functionaliy to check for false start.
+* 30/10/2023        0.5         Fixed *_FALSE_START in the output setup.
+* 31/10/2023        0.6         Fixed the input pinmodes with INPUT_PULLUP and making sure that the PreStage lights are turned only once.
+* 31/10/2023        0.7         Removed the delays in the loop function to avoid blockage and tweaked some more logics.
+* 01/11/2023        0.8         Changed Sensors from LOW to HIGH.
+* 02/11/2023        0.9         Sensors to turn off light except the false and resetting all values once the lights are complete. 
+* 02/11/2023        0.10        Commenting the OFF turning of the other lights when Line 2 is triggered.
+* 02/11/2023 		0.11        Adding more logic to turn off the PreStageLights when needed and fixed a bug with the reading of the sensors.
