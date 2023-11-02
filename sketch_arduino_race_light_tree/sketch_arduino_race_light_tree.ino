@@ -254,7 +254,7 @@ void continueRaceTreeLights() {
     digitalWrite(GREEN_LIGHTS, HIGH);
     greenLight = false;
     raceTreeLightEnded = true;
-    resetValues();
+    //resetValues();
   }
 
 }
