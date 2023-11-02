@@ -2,7 +2,7 @@
 * Copyright         : 2023 - Kenneth A & Cedric F
 * File Name         : sketch_arduino_race_light_tree.ino
 * Description       : This file contains the logic to control a custom made race light tree for RC cars.
-* Version           : 0.9
+* Version           : 0.10
 *                    
 * Revision History  :
 * Date				  Author      Comments
@@ -16,6 +16,7 @@
 * 31/10/2023    Cedric F    Removed the delays in the loop function to avoid blockage and tweaked some more logics.
 * 01/11/2023                Changed Sensors from LOW to HIGH
 * 02/11/2023                Sensors to turn off light except the false and resetting all values once the lights are complete. 
+* 02/11/2023                Commenting the OFF turning of the other lights when Line 2 is triggered
 *
 /******************************************************************/
 
@@ -153,13 +154,13 @@ void turnOnPreStageRight() {
 }
 
 void turnOnLeftFalseStartLight() {
-  turnOffLightsExceptFalseLights();
+  // turnOffLightsExceptFalseLights();
   digitalWrite(L_FALSE_START, LOW); // Turn on the Left False Start Light
   leftFalseLight = true;
 }
 
 void turnOnRightFalseStartLight() {
-  turnOffLightsExceptFalseLights();
+  // turnOffLightsExceptFalseLights();
   digitalWrite(R_FALSE_START, LOW); // Turn on the Right False Start Light
   rightFalseLight = true;
 }
