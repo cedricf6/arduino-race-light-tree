@@ -2,7 +2,7 @@
 * Copyright         : 2023 - Kenneth A & Cedric F
 * File Name         : sketch_arduino_race_light_tree.ino
 * Description       : This file contains the logic to control a custom made race light tree for RC cars.
-* Version           : 0.8
+* Version           : 0.9
 *                    
 * Revision History  :
 * Date				  Author      Comments
@@ -15,6 +15,7 @@
 * 31/10/2023    Cedric F    Fixed the input pinmodes with INPUT_PULLUP and making sure that the PreStage lights are turned only once.
 * 31/10/2023    Cedric F    Removed the delays in the loop function to avoid blockage and tweaked some more logics.
 * 01/11/2023                Changed Sensors from LOW to HIGH
+* 02/11/2023                Sensors to turn off light except the false and resetting all values once the lights are complete. 
 *
 /******************************************************************/
 
@@ -42,7 +43,8 @@ bool firstYellowLight = false;
 bool secondYellowLight = false;
 bool thirdYellowLight = false;
 bool greenLight = false;
-
+bool leftFalseLight = false;
+bool rightFalseLight = false;
 bool raceTreeLightStarted = false;
 bool raceTreeLightEnded = false;
 Chrono myChrono;
@@ -86,14 +88,14 @@ void loop()
 {
   // Checking for Left Car False start.
   // Second set of sensors (L2) on Line 2 for the Left Car to check for a false start.
-  if (isL2Blocked() && greenLight==false && raceTreeLightStarted==true) {
-    turnOnLeftFalseStartLight(); // This will keep on looping ON and OFF
+  if (isL2Blocked() && greenLight==false && raceTreeLightStarted==true && leftFalseLight==false) {
+    turnOnLeftFalseStartLight();
   }
 
   // Checking for Right Car False start.
   // Second set of sensors (R2) on Line 2 for the Right Car to check for a false start.
-  if (isR2Blocked() && greenLight==false && raceTreeLightStarted==true) {
-    turnOnRightFalseStartLight(); // This will keep on looping ON and OFF
+  if (isR2Blocked() && greenLight==false && raceTreeLightStarted==true && rightFalseLight==false) {
+    turnOnRightFalseStartLight();
   }
 
   // If Left Sensor 1 IS blocked and Left Sensor 2 IS NOT blocked, turn on the left Pre Stage Lights.
@@ -151,13 +153,15 @@ void turnOnPreStageRight() {
 }
 
 void turnOnLeftFalseStartLight() {
-  turnOffAllTheLights();
+  turnOffLightsExceptFalseLights();
   digitalWrite(L_FALSE_START, LOW); // Turn on the Left False Start Light
+  leftFalseLight = true;
 }
 
 void turnOnRightFalseStartLight() {
-  turnOffAllTheLights();
+  turnOffLightsExceptFalseLights();
   digitalWrite(R_FALSE_START, LOW); // Turn on the Right False Start Light
+  rightFalseLight = true;
 }
 
 void turnOffAllTheLights() {
@@ -186,6 +190,18 @@ void turnOnAllTheLights() {
   digitalWrite(GREEN_LIGHTS, LOW);
   digitalWrite(L_FALSE_START, LOW);
   digitalWrite(R_FALSE_START, LOW);
+}
+
+void turnOffLightsExceptFalseLights() {
+  // HIGH MEANS TURN OFF THE LIGHTS - inverted cases
+  digitalWrite(LEFT_PRE_STAGE_LIGHTS, HIGH);      
+  digitalWrite(RIGHT_PRE_STAGE_LIGHTS, HIGH);     
+  digitalWrite(LEFT_STAGE_LIGHTS, HIGH);    
+  digitalWrite(RIGHT_STAGE_LIGHTS, HIGH);      
+  digitalWrite(FIRST_YELLOW_LIGHTS, HIGH);     
+  digitalWrite(SECOND_YELLOW_LIGHTS, HIGH);     
+  digitalWrite(THIRD_YELLOW_LIGHTS, HIGH);
+  digitalWrite(GREEN_LIGHTS, HIGH);
 }
 
 void continueRaceTreeLights() {
@@ -238,6 +254,22 @@ void continueRaceTreeLights() {
     digitalWrite(GREEN_LIGHTS, HIGH);
     greenLight = false;
     raceTreeLightEnded = true;
-  }                
+    resetValues();
+  }
 
+}
+
+void resetValues() {
+  leftPreStage = false;
+  rightPreStage = false;
+  stageLight = false;
+  firstYellowLight = false;
+  secondYellowLight = false;
+  thirdYellowLight = false;
+  greenLight = false;
+  leftFalseLight = false;
+  rightFalseLight = false;
+  raceTreeLightStarted = false;
+  raceTreeLightEnded = false;
+  myChrono.restart();
 }
