@@ -2,7 +2,7 @@
 * Copyright         : 2023 - Kenneth A & Cedric F
 * File Name         : sketch_arduino_race_light_tree.ino
 * Description       : This file contains the logic to control a custom made race light tree for RC cars.
-* Version           : 0.11                    
+* Version           : 0.12
 /******************************************************************/
 
 #include<Chrono.h>
@@ -120,23 +120,23 @@ void loop()
 }
 
 bool isL1Blocked() {
-  // HIGH means Object Detected and hence return True for Left Sensor of Line #1.
-  return digitalRead(L1_SENSOR) == HIGH ? true : false;
+  // LOW means Object Detected and hence return True for Left Sensor of Line #1.  
+  return digitalRead(L1_SENSOR) == LOW ? false : true;
 }
 
 bool isR1Blocked() {
-  // HIGH means Object Detected and hence return True for Right Sensor of Line #1.
-  return digitalRead(R1_SENSOR) == HIGH ? true : false;
+  // LOW means Object Detected and hence return True for Right Sensor of Line #1.
+  return digitalRead(R1_SENSOR) == LOW ? false : true;
 }
 
 bool isL2Blocked() {
-  // HIGH means Object Detected and hence return True for Left Sensor of Line #2.
-  return digitalRead(L2_SENSOR) == HIGH ? true : false;
+  // LOW means Object Detected and hence return True for Left Sensor of Line #2.
+  return digitalRead(L2_SENSOR) == LOW ? false : true;
 }
 
 bool isR2Blocked() {
-  // HIGH means Object Detected and hence return True for Right Sensor of Line #2.
-  return digitalRead(R2_SENSOR) == HIGH ? true : false;
+  // lOW means Object Detected and hence return True for Right Sensor of Line #2.
+  return digitalRead(R2_SENSOR) == LOW ? false : true;
 }
 
 void turnOnPreStageLeft() {
