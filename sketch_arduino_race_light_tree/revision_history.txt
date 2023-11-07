@@ -13,3 +13,4 @@
 * 02/11/2023      0.10        Commenting the OFF turning of the other lights when Line 2 is triggered.
 * 02/11/2023 		  0.11        Adding more logic to turn off the PreStageLights when needed and fixed a bug with the reading of the sensors.
 * 03/11/2023      0.12        Fixed the HIGH / LOW issue of the Sensors.
+* 07/11/2023       0.13        Changed the Lights to use LOW when off and HIGH and when on.
