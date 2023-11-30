@@ -2,13 +2,13 @@
 * Copyright         : 2023 - Kenneth A & Cedric F
 * File Name         : sketch_arduino_race_light_tree.ino
 * Description       : This file contains the logic to control a custom made race light tree for RC cars.
-* Version           : 0.13
+* Version           : 0.14 (temp without SECOND_YELLOW_LIGHTS  and THIRD_YELLOW_LIGHTS )
 /******************************************************************/
 
 #include<Chrono.h>
 
-#define R2_SENSOR 0               // Right Sensor No.2 placed after Start Line (Line 2)
-#define L2_SENSOR 13               // Left Sensor No.2 placed after Start line (Line 2)
+#define R2_SENSOR 5               // Right Sensor No.2 placed after Start Line (Line 2)
+#define L2_SENSOR 4               // Left Sensor No.2 placed after Start line (Line 2)
 #define R1_SENSOR 12               // Right Sensor No.1 placed in line with the Start Line (Line 1)
 #define L1_SENSOR 11               // Left Sensor No.1 placed in line with the Start Line (Line 1) 
 #define LEFT_PRE_STAGE_LIGHTS 10   // 2 LEFT PRE STAGE BULBS : old Pre1
@@ -16,8 +16,8 @@
 #define LEFT_STAGE_LIGHTS 8        // 2 LEFT STAGE LIGHTS : old Pre3
 #define RIGHT_STAGE_LIGHTS 7       // 2 RIGHT STAGE LIGHTS : old Pre4
 #define FIRST_YELLOW_LIGHTS 6      // FIRST PAIR OF YELLOW LIGHTS : old Yellow
-#define SECOND_YELLOW_LIGHTS 5     // SECOND PAIR OF YELLOW LIGHTS : old Yellow1
-#define THIRD_YELLOW_LIGHTS 4      // THIRD PAIR OF YELLOW LIGHTS : old Yellow2 
+//#define SECOND_YELLOW_LIGHTS 5     // SECOND PAIR OF YELLOW LIGHTS : old Yellow1
+//#define THIRD_YELLOW_LIGHTS 4      // THIRD PAIR OF YELLOW LIGHTS : old Yellow2 
 #define GREEN_LIGHTS 3             // PAIR OF GREEN LIGHTS : old Green
 #define L_FALSE_START 2            // Left Bottom Red Light to indicate left Car false start
 #define R_FALSE_START 1            // Right Bottom Red Light to indicate right Car false start
@@ -46,8 +46,8 @@ void setup()
   pinMode(LEFT_STAGE_LIGHTS, OUTPUT); 
   pinMode(RIGHT_STAGE_LIGHTS, OUTPUT);
   pinMode(FIRST_YELLOW_LIGHTS, OUTPUT);
-  pinMode(SECOND_YELLOW_LIGHTS, OUTPUT); 
-  pinMode(THIRD_YELLOW_LIGHTS, OUTPUT);
+  //pinMode(SECOND_YELLOW_LIGHTS, OUTPUT); 
+  //pinMode(THIRD_YELLOW_LIGHTS, OUTPUT);
   pinMode(GREEN_LIGHTS, OUTPUT);
   pinMode(L_FALSE_START, OUTPUT);
   pinMode(R_FALSE_START, OUTPUT);
@@ -178,8 +178,8 @@ void turnOffAllTheLights() {
   digitalWrite(LEFT_STAGE_LIGHTS, LOW);
   digitalWrite(RIGHT_STAGE_LIGHTS, LOW);
   digitalWrite(FIRST_YELLOW_LIGHTS, LOW);     
-  digitalWrite(SECOND_YELLOW_LIGHTS, LOW);     
-  digitalWrite(THIRD_YELLOW_LIGHTS, LOW);    
+  //digitalWrite(SECOND_YELLOW_LIGHTS, LOW);     
+  //digitalWrite(THIRD_YELLOW_LIGHTS, LOW);    
   digitalWrite(GREEN_LIGHTS, LOW);
   digitalWrite(L_FALSE_START, LOW);
   digitalWrite(R_FALSE_START, LOW);
@@ -192,8 +192,8 @@ void turnOnAllTheLights() {
   digitalWrite(LEFT_STAGE_LIGHTS, HIGH);
   digitalWrite(RIGHT_STAGE_LIGHTS, HIGH);      
   digitalWrite(FIRST_YELLOW_LIGHTS, HIGH);     
-  digitalWrite(SECOND_YELLOW_LIGHTS, HIGH);     
-  digitalWrite(THIRD_YELLOW_LIGHTS, HIGH);    
+  //digitalWrite(SECOND_YELLOW_LIGHTS, HIGH);     
+  //digitalWrite(THIRD_YELLOW_LIGHTS, HIGH);    
   digitalWrite(GREEN_LIGHTS, HIGH);
   digitalWrite(L_FALSE_START, HIGH);
   digitalWrite(R_FALSE_START, HIGH);
@@ -217,13 +217,13 @@ void continueRaceTreeLights() {
 
   // Turn on the second pair of Yellow Lights after half a second more
   if (myChrono.hasPassed(13500) && secondYellowLight==false) {
-    digitalWrite(SECOND_YELLOW_LIGHTS, HIGH);
+    //digitalWrite(SECOND_YELLOW_LIGHTS, HIGH);
     secondYellowLight = true;
   }
 
   // Turn on the third pair of Yellow Lights after half a second more
   if (myChrono.hasPassed(14000) && thirdYellowLight==false) {
-    digitalWrite(THIRD_YELLOW_LIGHTS, HIGH);
+    //digitalWrite(THIRD_YELLOW_LIGHTS, HIGH);
     thirdYellowLight = true;
   }
 
@@ -238,8 +238,8 @@ void continueRaceTreeLights() {
     digitalWrite(LEFT_STAGE_LIGHTS, LOW);
     digitalWrite(RIGHT_STAGE_LIGHTS, LOW);
     digitalWrite(FIRST_YELLOW_LIGHTS, LOW);
-    digitalWrite(SECOND_YELLOW_LIGHTS, LOW);
-    digitalWrite(THIRD_YELLOW_LIGHTS, LOW);    
+    //digitalWrite(SECOND_YELLOW_LIGHTS, LOW);
+    //digitalWrite(THIRD_YELLOW_LIGHTS, LOW);    
   }
 
   // Turn off the Green Lights after 10.5 seconds has passed and greenLight back to false.
