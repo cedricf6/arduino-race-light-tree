@@ -2,7 +2,7 @@
 * Copyright         : 2023 - Kenneth A & Cedric F
 * File Name         : sketch_arduino_race_light_tree.ino
 * Description       : This file contains the logic to control a custom made race light tree for RC cars.
-* Version           : 0.16
+* Version           : 0.17
 /******************************************************************/
 
 #include<Chrono.h>
@@ -17,8 +17,6 @@
 #define SECOND_YELLOW_LIGHTS 5     // SECOND PAIR OF YELLOW LIGHTS : old Yellow1
 #define THIRD_YELLOW_LIGHTS 4      // THIRD PAIR OF YELLOW LIGHTS : old Yellow2 
 #define GREEN_LIGHTS 3             // PAIR OF GREEN LIGHTS : old Green
-#define L_FALSE_START 2            // Left Bottom Red Light to indicate left Car false start
-#define R_FALSE_START 1            // Right Bottom Red Light to indicate right Car false start
 
 bool leftPreStage = false;
 bool rightPreStage = false;
@@ -27,8 +25,6 @@ bool firstYellowLight = false;
 bool secondYellowLight = false;
 bool thirdYellowLight = false;
 bool greenLight = false;
-bool leftFalseLight = false;
-bool rightFalseLight = false;
 bool raceTreeLightStarted = false;
 bool raceTreeLightEnded = false;
 Chrono myChrono;
@@ -47,8 +43,6 @@ void setup()
   pinMode(SECOND_YELLOW_LIGHTS, OUTPUT); 
   pinMode(THIRD_YELLOW_LIGHTS, OUTPUT);
   pinMode(GREEN_LIGHTS, OUTPUT);
-  pinMode(L_FALSE_START, OUTPUT);
-  pinMode(R_FALSE_START, OUTPUT);
 
   // INPUT SETUP
   // Using INPUT_PULLUP for NPN Sensors and the logic is reversed 
@@ -137,16 +131,6 @@ void turnOffPreStageRight() {
   myChrono.stop();
 }
 
-void turnOnLeftFalseStartLight() {
-  digitalWrite(L_FALSE_START, HIGH); // Turn on the Left False Start Light
-  leftFalseLight = true;
-}
-
-void turnOnRightFalseStartLight() {
-  digitalWrite(R_FALSE_START, HIGH); // Turn on the Right False Start Light
-  rightFalseLight = true;
-}
-
 void turnOffAllTheLights() {
   // LOW MEANS TURN OFF THE LIGHTS
   digitalWrite(LEFT_PRE_STAGE_LIGHTS, LOW);
@@ -157,8 +141,6 @@ void turnOffAllTheLights() {
   digitalWrite(SECOND_YELLOW_LIGHTS, LOW);     
   digitalWrite(THIRD_YELLOW_LIGHTS, LOW);    
   digitalWrite(GREEN_LIGHTS, LOW);
-  digitalWrite(L_FALSE_START, LOW);
-  digitalWrite(R_FALSE_START, LOW);
 }
 
 void turnOnAllTheLights() {
@@ -171,8 +153,6 @@ void turnOnAllTheLights() {
   digitalWrite(SECOND_YELLOW_LIGHTS, HIGH);     
   digitalWrite(THIRD_YELLOW_LIGHTS, HIGH);    
   digitalWrite(GREEN_LIGHTS, HIGH);
-  digitalWrite(L_FALSE_START, HIGH);
-  digitalWrite(R_FALSE_START, HIGH);
 }
 
 void continueRaceTreeLights() {
