@@ -2,13 +2,11 @@
 * Copyright         : 2023 - Kenneth A & Cedric F
 * File Name         : sketch_arduino_race_light_tree.ino
 * Description       : This file contains the logic to control a custom made race light tree for RC cars.
-* Version           : 0.14 (temp without SECOND_YELLOW_LIGHTS  and THIRD_YELLOW_LIGHTS )
+* Version           : 0.16
 /******************************************************************/
 
 #include<Chrono.h>
 
-#define R2_SENSOR 5               // Right Sensor No.2 placed after Start Line (Line 2)
-#define L2_SENSOR 4               // Left Sensor No.2 placed after Start line (Line 2)
 #define R1_SENSOR 12               // Right Sensor No.1 placed in line with the Start Line (Line 1)
 #define L1_SENSOR 11               // Left Sensor No.1 placed in line with the Start Line (Line 1) 
 #define LEFT_PRE_STAGE_LIGHTS 10   // 2 LEFT PRE STAGE BULBS : old Pre1
@@ -16,8 +14,8 @@
 #define LEFT_STAGE_LIGHTS 8        // 2 LEFT STAGE LIGHTS : old Pre3
 #define RIGHT_STAGE_LIGHTS 7       // 2 RIGHT STAGE LIGHTS : old Pre4
 #define FIRST_YELLOW_LIGHTS 6      // FIRST PAIR OF YELLOW LIGHTS : old Yellow
-//#define SECOND_YELLOW_LIGHTS 5     // SECOND PAIR OF YELLOW LIGHTS : old Yellow1
-//#define THIRD_YELLOW_LIGHTS 4      // THIRD PAIR OF YELLOW LIGHTS : old Yellow2 
+#define SECOND_YELLOW_LIGHTS 5     // SECOND PAIR OF YELLOW LIGHTS : old Yellow1
+#define THIRD_YELLOW_LIGHTS 4      // THIRD PAIR OF YELLOW LIGHTS : old Yellow2 
 #define GREEN_LIGHTS 3             // PAIR OF GREEN LIGHTS : old Green
 #define L_FALSE_START 2            // Left Bottom Red Light to indicate left Car false start
 #define R_FALSE_START 1            // Right Bottom Red Light to indicate right Car false start
@@ -46,8 +44,8 @@ void setup()
   pinMode(LEFT_STAGE_LIGHTS, OUTPUT); 
   pinMode(RIGHT_STAGE_LIGHTS, OUTPUT);
   pinMode(FIRST_YELLOW_LIGHTS, OUTPUT);
-  //pinMode(SECOND_YELLOW_LIGHTS, OUTPUT); 
-  //pinMode(THIRD_YELLOW_LIGHTS, OUTPUT);
+  pinMode(SECOND_YELLOW_LIGHTS, OUTPUT); 
+  pinMode(THIRD_YELLOW_LIGHTS, OUTPUT);
   pinMode(GREEN_LIGHTS, OUTPUT);
   pinMode(L_FALSE_START, OUTPUT);
   pinMode(R_FALSE_START, OUTPUT);
@@ -56,8 +54,6 @@ void setup()
   // Using INPUT_PULLUP for NPN Sensors and the logic is reversed 
   pinMode(L1_SENSOR, INPUT_PULLUP);
   pinMode(R1_SENSOR, INPUT_PULLUP);
-  pinMode(L2_SENSOR, INPUT_PULLUP);
-  pinMode(R2_SENSOR, INPUT_PULLUP);
 
   // Initalization Testing Stage
   turnOnAllTheLights();
@@ -71,39 +67,28 @@ void setup()
 
 void loop()
 {
-  // Checking for Left Car False start.
-  // Second set of sensors (L2) on Line 2 for the Left Car to check for a false start.
-  if (isL2Blocked() && !greenLight && raceTreeLightStarted && !leftFalseLight && !raceTreeLightEnded) {
-    turnOnLeftFalseStartLight();
-  }
-
-  // Checking for Right Car False start.
-  // Second set of sensors (R2) on Line 2 for the Right Car to check for a false start.
-  if (isR2Blocked() && !greenLight && raceTreeLightStarted && !rightFalseLight && !raceTreeLightEnded) {
-    turnOnRightFalseStartLight();
-  }
 
   // If Left Sensor 1 IS blocked and Left Sensor 2 IS NOT blocked, turn ON the left PreStage Lights.
   // This means that the Left car is on the starting line but not overlapping the second left sensor.
-  if (isL1Blocked() && !isL2Blocked() && !leftPreStage){
+  if (isL1Blocked() && !leftPreStage){
     turnOnPreStageLeft();
   // If both Left Sensors are unblocked in this situation, turn Left PreStage Lights OFF again.
-  } else if (!isL1Blocked() && !isL2Blocked() && leftPreStage && !raceTreeLightStarted) {
+  } else if (!isL1Blocked() && leftPreStage && !raceTreeLightStarted) {
     turnOffPreStageLeft();
     // If both Left Sensors are blocked in this situation, turn Left PreStage Lights OFF again.
-  } else if (isL1Blocked() && isL2Blocked() && leftPreStage && !raceTreeLightStarted) {
+  } else if (isL1Blocked() && leftPreStage && !raceTreeLightStarted) {
     turnOffPreStageLeft();
   }
   
   // If Right Sensor 1 IS blocked and Right Sensor 2 IS NOT blocked, turn ON the Right PreStage Lights.
   // This means that the Right car is on the starting line but not overlapping the second right sensor.
-  if (isR1Blocked() && !isR2Blocked() && !rightPreStage){
+  if (isR1Blocked() && !rightPreStage){
     turnOnPreStageRight();
   // If both Right Sensors are unblocked in this situation, turn Right PreStage Lights OFF again.    
-  } else if (!isR1Blocked() && !isR2Blocked() && rightPreStage && !raceTreeLightStarted) {
+  } else if (!isR1Blocked() && rightPreStage && !raceTreeLightStarted) {
     turnOffPreStageRight();
   // If both Right Sensors are blocked in this situation, turn Right PreStage Lights OFF again.
-  } else if (isR1Blocked() && isR2Blocked() && rightPreStage && !raceTreeLightStarted) {
+  } else if (isR1Blocked() && rightPreStage && !raceTreeLightStarted) {
     turnOffPreStageRight();
   }
 
@@ -129,15 +114,6 @@ bool isR1Blocked() {
   return digitalRead(R1_SENSOR) == LOW ? false : true;
 }
 
-bool isL2Blocked() {
-  // LOW means Object Detected and hence return True for Left Sensor of Line #2.
-  return digitalRead(L2_SENSOR) == LOW ? false : true;
-}
-
-bool isR2Blocked() {
-  // lOW means Object Detected and hence return True for Right Sensor of Line #2.
-  return digitalRead(R2_SENSOR) == LOW ? false : true;
-}
 
 void turnOnPreStageLeft() {
   digitalWrite(LEFT_PRE_STAGE_LIGHTS, HIGH);
@@ -178,8 +154,8 @@ void turnOffAllTheLights() {
   digitalWrite(LEFT_STAGE_LIGHTS, LOW);
   digitalWrite(RIGHT_STAGE_LIGHTS, LOW);
   digitalWrite(FIRST_YELLOW_LIGHTS, LOW);     
-  //digitalWrite(SECOND_YELLOW_LIGHTS, LOW);     
-  //digitalWrite(THIRD_YELLOW_LIGHTS, LOW);    
+  digitalWrite(SECOND_YELLOW_LIGHTS, LOW);     
+  digitalWrite(THIRD_YELLOW_LIGHTS, LOW);    
   digitalWrite(GREEN_LIGHTS, LOW);
   digitalWrite(L_FALSE_START, LOW);
   digitalWrite(R_FALSE_START, LOW);
@@ -192,8 +168,8 @@ void turnOnAllTheLights() {
   digitalWrite(LEFT_STAGE_LIGHTS, HIGH);
   digitalWrite(RIGHT_STAGE_LIGHTS, HIGH);      
   digitalWrite(FIRST_YELLOW_LIGHTS, HIGH);     
-  //digitalWrite(SECOND_YELLOW_LIGHTS, HIGH);     
-  //digitalWrite(THIRD_YELLOW_LIGHTS, HIGH);    
+  digitalWrite(SECOND_YELLOW_LIGHTS, HIGH);     
+  digitalWrite(THIRD_YELLOW_LIGHTS, HIGH);    
   digitalWrite(GREEN_LIGHTS, HIGH);
   digitalWrite(L_FALSE_START, HIGH);
   digitalWrite(R_FALSE_START, HIGH);
@@ -217,13 +193,13 @@ void continueRaceTreeLights() {
 
   // Turn on the second pair of Yellow Lights after half a second more
   if (myChrono.hasPassed(13500) && secondYellowLight==false) {
-    //digitalWrite(SECOND_YELLOW_LIGHTS, HIGH);
+    digitalWrite(SECOND_YELLOW_LIGHTS, HIGH);
     secondYellowLight = true;
   }
 
   // Turn on the third pair of Yellow Lights after half a second more
   if (myChrono.hasPassed(14000) && thirdYellowLight==false) {
-    //digitalWrite(THIRD_YELLOW_LIGHTS, HIGH);
+    digitalWrite(THIRD_YELLOW_LIGHTS, HIGH);
     thirdYellowLight = true;
   }
 
@@ -238,31 +214,15 @@ void continueRaceTreeLights() {
     digitalWrite(LEFT_STAGE_LIGHTS, LOW);
     digitalWrite(RIGHT_STAGE_LIGHTS, LOW);
     digitalWrite(FIRST_YELLOW_LIGHTS, LOW);
-    //digitalWrite(SECOND_YELLOW_LIGHTS, LOW);
-    //digitalWrite(THIRD_YELLOW_LIGHTS, LOW);    
+    digitalWrite(SECOND_YELLOW_LIGHTS, LOW);
+    digitalWrite(THIRD_YELLOW_LIGHTS, LOW);    
   }
 
   // Turn off the Green Lights after 10.5 seconds has passed and greenLight back to false.
   if (myChrono.hasPassed(25000) && greenLight==true) {
     digitalWrite(GREEN_LIGHTS, LOW);
     greenLight = false;
-    raceTreeLightEnded = true;
-    //resetValues(); 
+    raceTreeLightEnded = true; 
   }
 
-}
-
-void resetValues() {
-  leftPreStage = false;
-  rightPreStage = false;
-  stageLight = false;
-  firstYellowLight = false;
-  secondYellowLight = false;
-  thirdYellowLight = false;
-  greenLight = false;
-  leftFalseLight = false;
-  rightFalseLight = false;
-  raceTreeLightStarted = false;
-  raceTreeLightEnded = false;
-  myChrono.restart();
 }
