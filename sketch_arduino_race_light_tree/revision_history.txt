@@ -16,3 +16,4 @@
 * 07/11/2023       0.13        Changed the Lights to use LOW when off and HIGH and when on.
 * 30/11/2022        0.14        Changed pins for L2 and R2 sensors - temporary to troubleshoot false light problem
 * 10/12/2023      0.16         Removing the L2 and R2 sensors.
+* 10/12/2023      0.17         Removing the False lights. 
